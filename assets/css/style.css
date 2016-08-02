@@ -11,15 +11,30 @@ body {
 	border-bottom: none;
 }
 
-#time_remaining {
+#time_display {
+	height: 50px;
+}
+
+.difficulty {
+	font-size: 25px;
 }
 
 #question {
 	color: #ffa366;
+	/*font-family: 'jubilat', Georgia, serif;*/
 }
 
-.display_none {
-	display: none;
+.glyphicon-ok {
+	color: green;
+}
+
+.glyphicon-remove {
+	color: red;
+}
+
+.list-group-item:first-child,
+.list-group-item:last-child {
+	border-radius: unset;
 }
 
 .panel {
