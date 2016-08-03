@@ -12,6 +12,7 @@ var difficulty = 0,
 	player_answer,
 	questions_asked = 0,
 	answers_array = [],
+	unanswered = [],
 
 	$time = $('#time'),
 	$q = $('#question'),
@@ -85,14 +86,22 @@ function testAnswer() {
 		$('#'+player_answer).html(''
 						+'<a class="answer list-group-item">'
 						+	question[player_answer]
-						+	'<span class="glyphicon glyphicon-remove"></span>'
+						+	'<span class="answer-symbol glyphicon glyphicon-remove"></span>'
 						+'</a>');
 
 		$time.html('Wrong!').css('color', 'red');
 
+		unanswered.push('<span class="text-center answer-symbol glyphicon glyphicon-remove"></span>');
+
 	} else if(player_answer === question['answer']) {
 
 		$time.html('Correct!').css('color', 'green');
+
+		unanswered.push('<span class="text-center answer-symbol glyphicon glyphicon-ok"></span>');
+
+	} else if(player_answer === undefined) {
+
+		unanswered.push('<h6 class="text-center">(unanswered)</h6>');
 
 	}
 
@@ -101,7 +110,7 @@ function testAnswer() {
 	$('#'+question['answer']).replaceWith(''
 								+'<a class="answer list-group-item">'
 								+	question[question['answer']]
-								+	'<span class="glyphicon glyphicon-ok"></span>'
+								+	'<span class="answer-symbol glyphicon glyphicon-ok"></span>'
 								+'</a>'
 								);
 
@@ -131,6 +140,8 @@ function testAnswer() {
 //-------------------------------------------------------------
 
 function displayQuestion() {
+
+	$time.html('');
 
 	startTimer(difficulty, $time);
 
@@ -204,14 +215,14 @@ function displayStats() {
 					+			'</td>'
 					+			'<td>'
 					+				'<h6 class="right">'
-					+				used_questions[0].answer
+					+				used_questions[0][used_questions[0].answer]
 					+				'</h6>'
 					+			'</td>'
-					// +			'<td>'
-					// +				'<h6>'
-					// +				answers_array[0]
+					+			'<td>'
+					// +				'<h6 class="left">'
+					+				unanswered[0]
 					// +				'</h6>'
-					// +			'</td>'
+					+			'</td>'
 					+		'</tr>'
 					+		'<tr>'
 					+			'<td>'
@@ -221,14 +232,14 @@ function displayStats() {
 					+			'</td>'
 					+			'<td>'
 					+				'<h6 class="right">'
-					+				used_questions[1].answer
+					+				used_questions[1][used_questions[1].answer]
 					+				'</h6>'
 					+			'</td>'
-					// +			'<td>'
-					// +				'<h6>'
-					// +				answers_array[1]
+					+			'<td>'
+					// +				'<h6 class="left">'
+					+				unanswered[1]
 					// +				'</h6>'
-					// +			'</td>'
+					+			'</td>'
 					+		'</tr>'
 					+		'<tr>'
 					+			'<td>'
@@ -238,14 +249,14 @@ function displayStats() {
 					+			'</td>'
 					+			'<td>'
 					+				'<h6 class="right">'
-					+				used_questions[2].answer
+					+				used_questions[2][used_questions[2].answer]
 					+				'</h6>'
 					+			'</td>'
-					// +			'<td>'
-					// +				'<h6>'
-					// +				answers_array[2]
+					+			'<td>'
+					// +				'<h6 class="left">'
+					+				unanswered[2]
 					// +				'</h6>'
-					// +			'</td>'
+					+			'</td>'
 					+		'</tr>'
 					// +		'<tr>'
 					// +			'<td>'
@@ -321,6 +332,13 @@ function displayStats() {
 
 	answers_array.length = 0;
 	used_questions.length = 0;
+
+}
+
+
+function displayAnswerSymbol() {
+
+
 
 }
 
