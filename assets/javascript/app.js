@@ -1,6 +1,8 @@
 'use strict';
 
-
+//--------------------------------------------------------------
+//	Global variables
+//--------------------------------------------------------------
 
 var difficulty = 0,
 	counter,
@@ -8,15 +10,18 @@ var difficulty = 0,
 	used_questions = [],
 	testing = false,
 	player_answer,
+	questions_asked = 0,
+	answers_array = [],
 
 	$time = $('#time'),
 	$q = $('#question'),
-	$ad = $('#answers_display'),
+	$acd = $('#answer_choices_display'),
 	$dd = $('#difficulty_display');
 
 
+
 //--------------------------------------------------------------
-//	Random number generator function with upper and lower ranges
+//	Random number generator function (w upper and lower ranges)
 //--------------------------------------------------------------
 
 function rand(min, max) {
@@ -25,22 +30,22 @@ function rand(min, max) {
 
 
 //-------------------------------------------------------------
-//	Random question picker function 
+//	Random question-picking function 
 //-------------------------------------------------------------
 
 function getQuestion() {
 	question = question_array[rand(0, question_array.length+1)];
+	setQuestion();
 }
 
 
 //-------------------------------------------------------------
-//	Last question saver function - avoids duplicates
+//	Most recent question-saving function
 //-------------------------------------------------------------
 
 function setQuestion() {
-	used_questions.append(question);
+	used_questions.push(question);
 }
-
 
 
 //-------------------------------------------------------------
@@ -51,7 +56,7 @@ function startTimer(duration, time) {
 
 	counter = setInterval(function() {
 
-		time.text(duration);
+		time.text(duration).css('color', 'inherit');
 
 		if(--duration < 0) {
 			clearInterval(counter);
@@ -67,37 +72,63 @@ function startTimer(duration, time) {
 
 
 //-------------------------------------------------------------
-//	Answer tester function 
+//	Answer-testing function 
 //-------------------------------------------------------------
 
 function testAnswer() {
 
 	testing = true;
-	console.log(testing);
 
-	if(player_answer !== question['answer']) {
-		$('#'+player_answer).html('<a class="answer list-group-item">'
-			+question[player_answer]
-			+'<span class="glyphicon glyphicon-remove"></span>'
-		+'</a>');
+	if(player_answer !== question['answer']
+	&& player_answer !== undefined) {
+
+		$('#'+player_answer).html(''
+						+'<a class="answer list-group-item">'
+						+	question[player_answer]
+						+	'<span class="glyphicon glyphicon-remove"></span>'
+						+'</a>');
+
+		$time.html('Wrong!').css('color', 'red');
+
+	} else if(player_answer === question['answer']) {
+
+		$time.html('Correct!').css('color', 'green');
+
 	}
 
-	$('#'+question['answer']).html('<a class="answer list-group-item">'
-			+question[question['answer']]
-			+'<span class="glyphicon glyphicon-ok"></span>'
-		+'</a>');
-	setTimeout(() => {displayQuestion()}, 3000);
+	player_answer = undefined;
+
+	$('#'+question['answer']).replaceWith(''
+								+'<a class="answer list-group-item">'
+								+	question[question['answer']]
+								+	'<span class="glyphicon glyphicon-ok"></span>'
+								+'</a>'
+								);
+
+	if(questions_asked+1 < 3) {
+
+		setTimeout(() => {displayQuestion()}, 2000);
+
+	} else {
+
+		setTimeout(() => {displayStats()}, 2000);
+
+	}
+
+	answers_array.push(player_answer);
+
+	questions_asked++;
+
+	$('#answer_choices_display').off('click', '.answer');
 
 	testing = false;
-	console.log(testing);
 
 }
 
 
 //-------------------------------------------------------------
-//	Display questions function 
+//	Question-displaying function 
 //-------------------------------------------------------------
-
 
 function displayQuestion() {
 
@@ -109,32 +140,219 @@ function displayQuestion() {
 
 	$dd.html('');
 
-	$ad.html(
-		'<a class="answer list-group-item">'+question['A']+'</a>'+
-		'<a class="answer list-group-item">'+question['B']+'</a>'+
-		'<a class="answer list-group-item">'+question['C']+'</a>'+
-		'<a class="answer list-group-item">'+question['D']+'</a>'+
-		'<a class="answer list-group-item">'+question['answer']+'</a>'+
-		''
-	);
+	$acd.html(''
+		+'<a class="answer list-group-item">'+question['A']+'</a>'
+		+'<a class="answer list-group-item">'+question['B']+'</a>'
+		+'<a class="answer list-group-item">'+question['C']+'</a>'
+		+'<a class="answer list-group-item">'+question['D']+'</a>'
+		// +'<a class="answer list-group-item">'+question['answer']+'</a>'
+		);
 
-	$('#answers_display').children().eq(0).attr('id', 'A');
-	$('#answers_display').children().eq(1).attr('id', 'B');
-	$('#answers_display').children().eq(2).attr('id', 'C');
-	$('#answers_display').children().eq(3).attr('id', 'D');
+	$('#answer_choices_display').children().eq(0).attr('id', 'A');
+	$('#answer_choices_display').children().eq(1).attr('id', 'B');
+	$('#answer_choices_display').children().eq(2).attr('id', 'C');
+	$('#answer_choices_display').children().eq(3).attr('id', 'D');
 
-	if(testing !== true) {
-		setTimeout(() => {testAnswer()}, 5000);
-	}
+	// setAnswerChoicesEvent();
+
+	$('#answer_choices_display').on('click', '.answer', function() {
+		
+		clearInterval(counter);
+		player_answer = $(this).attr('id');
+
+		testAnswer();
+
+	});
 
 }
 
 
 //-------------------------------------------------------------
-//	jQuery
+//	Stats-displaying function (after each round of questions)
+//-------------------------------------------------------------
+
+function displayStats() {
+
+	$('.clear_on_stats').html('');
+
+	$('#stats').html(''
+					+'<table class="table table-condensed' 
+					// +									 'col-lg-6 '
+					// +									 'col-md-8 '
+					// +									 'col-sm-10 '
+					// +									 'col-xs-10'
+					+'">'
+					// +	'<thead>'
+					// +		'<tr>'
+					// +			'<th>'
+					// +				'<h4>Questions</h4>'
+					// +			'</th>'
+					// +			'<th>'
+					// +				'<h5></h5>'
+					// +			'</th>'
+					// // +			'<th>'
+					// // +				'<h5></h5>'
+					// // +			'</th>'
+					// +		'</tr>'
+					// +	'</thead>'
+					+	'<tbody>'
+					+		'<tr>'
+					+			'<td>'
+					+				'<h6>'
+					+				used_questions[0].question
+					+				'</h6>'
+					+			'</td>'
+					+			'<td>'
+					+				'<h6 class="right">'
+					+				used_questions[0].answer
+					+				'</h6>'
+					+			'</td>'
+					// +			'<td>'
+					// +				'<h6>'
+					// +				answers_array[0]
+					// +				'</h6>'
+					// +			'</td>'
+					+		'</tr>'
+					+		'<tr>'
+					+			'<td>'
+					+				'<h6>'
+					+				used_questions[1].question
+					+				'</h6>'
+					+			'</td>'
+					+			'<td>'
+					+				'<h6 class="right">'
+					+				used_questions[1].answer
+					+				'</h6>'
+					+			'</td>'
+					// +			'<td>'
+					// +				'<h6>'
+					// +				answers_array[1]
+					// +				'</h6>'
+					// +			'</td>'
+					+		'</tr>'
+					+		'<tr>'
+					+			'<td>'
+					+				'<h6>'
+					+				used_questions[2].question
+					+				'</h6>'
+					+			'</td>'
+					+			'<td>'
+					+				'<h6 class="right">'
+					+				used_questions[2].answer
+					+				'</h6>'
+					+			'</td>'
+					// +			'<td>'
+					// +				'<h6>'
+					// +				answers_array[2]
+					// +				'</h6>'
+					// +			'</td>'
+					+		'</tr>'
+					// +		'<tr>'
+					// +			'<td>'
+					// +				used_questions[3].question
+					// +			'</td>'
+					// +			'<td>'
+					// +				used_questions[3].answer
+					// +			'</td>'
+					// +			'<td>'
+					// +				answers_array[3]
+					// +			'</td>'
+					// +		'</tr>'
+					// +		'<tr>'
+					// +			'<td>'
+					// +				used_questions[4].question
+					// +			'</td>'
+					// +			'<td>'
+					// +				used_questions[4].answer
+					// +			'</td>'
+					// +			'<td>'
+					// +				answers_array[4]
+					// +			'</td>'
+					// +		'</tr>'
+					// +		'<tr>'
+					// +			'<td>'
+					// +				used_questions[5].question
+					// +			'</td>'
+					// +			'<td>'
+					// +				used_questions[5].answer
+					// +			'</td>'
+					// +			'<td>'
+					// +				answers_array[5]
+					// +			'</td>'
+					// +		'</tr>'
+					// +		'<tr>'
+					// +			'<td>'
+					// +				used_questions[6].question
+					// +			'</td>'
+					// +			'<td>'
+					// +				used_questions[6].answer
+					// +			'</td>'
+					// +			'<td>'
+					// +				answers_array[6]
+					// +			'</td>'
+					// +		'</tr>'
+					// +		'<tr>'
+					// +			'<td>'
+					// +				used_questions[7].question
+					// +			'</td>'
+					// +			'<td>'
+					// +				used_questions[7].answer
+					// +			'</td>'
+					// +			'<td>'
+					// +				answers_array[7]
+					// +			'</td>'
+					// +		'</tr>'
+					// +		'<tr>'
+					// +			'<td>'
+					// +				used_questions[8].question
+					// +			'</td>'
+					// +			'<td>'
+					// +				used_questions[8].answer
+					// +			'</td>'
+					// +			'<td>'
+					// +				answers_array[8]
+					// +			'</td>'
+					// +		'</tr>'
+					+	'</tbody>'
+					+'</table>'
+
+					+'<a id="restart" class="btn">new game</a>'
+					);
+
+	answers_array.length = 0;
+	used_questions.length = 0;
+
+}
+
+
+//-------------------------------------------------------------
+//	game-resetting function
+//-------------------------------------------------------------
+
+function restart() {
+
+	$('#stats').html('');
+
+	$dd.html(
+			'<a href="#" id="easy" class="difficulty list-group-item">'
+			+'easy</a>'
+			+'<a href="#" id="medium" class="difficulty list-group-item">'
+			+'medium</a>'
+			+'<a href="#" id="hard" class="difficulty list-group-item">'
+			+'hard</a>'
+			);
+
+	questions_asked = 0;
+
+}
+
+
+//-------------------------------------------------------------
+//	main jQuery
 //-------------------------------------------------------------
 
 $(document).ready(function() {
+	
 
 	$("#jquery_jplayer_1").jPlayer({
 		
@@ -162,7 +380,7 @@ $(document).ready(function() {
 	});
 
 
-	$('.difficulty').on('click', function() {
+	$('#difficulty_display').on('click', '.difficulty', function() {
 		
 		if($(this).attr('id') === 'easy') {
 			difficulty = 15;
@@ -177,13 +395,10 @@ $(document).ready(function() {
 	});
 
 
-	$('#answers_display').on('click', '.answer', function() {
-		
-		console.log('clicked on .answer '+player_answer);
-		clearInterval(counter);
-		player_answer = $(this).attr('id');
-		console.log(player_answer);
+	$('#stats').on('click', '#restart', function() {
 
+		restart();
+	
 	});
 
 

@@ -24,8 +24,39 @@ body {
 	/*font-family: 'jubilat', Georgia, serif;*/
 }
 
+.right {
+	text-align: right;
+}
+
+.table {
+/*	width: 80%;
+	margin-left: 65px;
+*/	margin-top: 20px;
+}
+
+.table thead tr th,
+.table tbody tr td {
+	border-bottom: none;
+	border-top: none;
+}
+
+/*tbody tr td:nth-child(0) {
+	text-align: left;
+}
+*/
+h6 {
+	text-align: left;
+	margin-top: 0;
+	margin-bottom: 10px;
+}
+
+.btn {
+	border: none;
+}
+
 .glyphicon-ok {
 	color: green;
+	margin-left: 5px;
 }
 
 .glyphicon-remove {
@@ -38,7 +69,7 @@ body {
 }
 
 .panel {
-	height: 440px;
+	height: 400px;
 	-webkit-box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
 	box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
 	border: none;
