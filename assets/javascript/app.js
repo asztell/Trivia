@@ -332,6 +332,7 @@ function displayStats() {
 
 	answers_array.length = 0;
 	used_questions.length = 0;
+	unanswered.length = 0;
 
 }
 
