@@ -11,6 +11,28 @@ body {
 	border-bottom: none;
 }
 
+#mute {
+	color: #c8c8c8;
+	background-color: #272b30;
+	border: none;
+	font-size: 25px;
+	position: relative;
+	left: 70%;
+	top: -68px;
+	display: none;
+}
+
+#unmute {
+	color: #c8c8c8;
+	background-color: #272b30;
+	border: none;
+	font-size: 25px;
+	position: relative;
+	left: 70%;
+	top: -68px;
+}
+
+
 #time_display {
 	height: 50px;
 }

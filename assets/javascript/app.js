@@ -394,8 +394,26 @@ $(document).ready(function() {
 		},
 
 		swfPath: "/js",
-		loop: true
+		supplied: "mp3",
+		loop: true,
+        cssSelectorAncestor: "",
+      	cssSelector: {
+          mute: "#mute",
+          unmute: "#unmute"
+        }
 
+	});
+
+	$('#mute').trigger('click');
+
+	$('#mute').click(function() {
+	  $(this).toggle();
+	  $('#unmute').toggle();
+	});
+
+	$('#unmute').click(function() {
+	  $(this).toggle();
+	  $('#mute').toggle();
 	});
 
 
